@@ -1,0 +1,49 @@
+services:
+  nextcloud_redis:
+    image: redis:alpine
+    container_name: nextcloud_redis
+    networks:
+      - nginx_proxy_manager
+    restart: always
+
+  nextcloud_db:
+    image: mariadb:lts
+    container_name: nextcloud_db
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    volumes:
+      - CHANGE_TO_COMPOSE_DATA_PATH/nextcloud/db:/var/lib/mysql
+    environment:
+      - MARIADB_AUTO_UPGRADE=1
+      - MARIADB_ROOT_PASSWORD=${NEXTCLOUD_MARIADB_ROOT_PW}
+      - MARIADB_DATABASE=nextcloud
+      - MARIADB_USER=nextcloud
+      - MARIADB_PASSWORD=${NEXTCLOUD_DB_PW}
+    networks:
+      - nginx_proxy_manager
+    restart: always
+
+  nextcloud_app:
+    image: nextcloud:latest
+    container_name: nextcloud
+    networks:
+      - nginx_proxy_manager
+    volumes:
+      - CHANGE_TO_COMPOSE_DATA_PATH/nextcloud/app:/var/www/html
+      - CHANGE_TO_COMPOSE_DATA_PATH/nextcloud/app/data:/var/www/html/data
+    environment:
+      - MYSQL_HOST=nextcloud_db
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=${NEXTCLOUD_DB_PW}
+      - REDIS_HOST=nextcloud_redis
+      - NEXTCLOUD_ADMIN_USER=admin
+      - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PW}
+      - NEXTCLOUD_TRUSTED_DOMAINS=${NEXTCLOUD_TRUSTED_DOMAIN}
+      - TRUSTED_PROXIES=nginx_proxy_manager
+      - OVERWRITEPROTOCOL=https
+    restart: always
+    stop_grace_period: 5m
+
+networks:
+  nginx_proxy_manager:
+    external: true

@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  homeassistant:
+    container_name: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    restart: unless-stopped
+    privileged: true # important for using USB-Sticks (Zigbee/Z-Wave)
+    volumes:
+      - CHANGE_TO_COMPOSE_DATA_PATH/homeassistant:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+    networks:
+      - nginx_proxy_manager
+    environment:
+      - TZ=${TZ}
+    # network_mode: host
+    # use the above line for LDNA+uPnP+mDNS functionality, worsens security
+    depends_on:
+      - mqtt
+
+  mqtt:
+    container_name: mosquitto
+    image: eclipse-mosquitto:latest
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+    networks:
+      - nginx_proxy_manager
+    volumes:
+      - CHANGE_TO_COMPOSE_DATA_PATH/mosquitto/config:/mosquitto/config
+      - CHANGE_TO_COMPOSE_DATA_PATH/mosquitto/data:/mosquitto/data
+      - CHANGE_TO_COMPOSE_DATA_PATH/mosquitto/log:/mosquitto/log
+    entrypoint: >
+      sh -c "echo 'listener 1883' > /mosquitto/config/mosquitto.conf &&
+             echo 'allow_anonymous false' >> /mosquitto/config/mosquitto.conf &&
+             echo 'password_file /mosquitto/config/password.txt' >> /mosquitto/config/mosquitto.conf &&
+             touch /mosquitto/config/password.txt &&
+             mosquitto_passwd -b /mosquitto/config/password.txt ${MQTT_USER} ${MQTT_PASSWORD} &&
+             exec /usr/sbin/mosquitto -c /mosquitto/config/mosquitto.conf"
+
+networks:
+  nginx_proxy_manager:
+    external: true

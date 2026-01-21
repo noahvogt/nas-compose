@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+      - "8080:80/tcp"
+    environment:
+      TZ: ${TZ}
+      FTLCONF_webserver_api_password: ${PIHOLE_WEBPASSWORD}
+      FTLCONF_LOCAL_IPV4: ${PIHOLE_LOCAL_IP}
+    volumes:
+      - CHANGE_TO_COMPOSE_DATA_PATH/pihole/etc-pihole:/etc/pihole
+      - CHANGE_TO_COMPOSE_DATA_PATH/pihole/etc-dnsmasq.d:/etc/dnsmasq.d
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
+    networks:
+      - nginx_proxy_manager
+
+networks:
+  nginx_proxy_manager:
+    external: true
