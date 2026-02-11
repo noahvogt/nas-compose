@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: wikijs-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: wiki
+      POSTGRES_USER: wiki
+      POSTGRES_PASSWORD: ${WIKI_DB_PASS}
+    volumes:
+      - CHANGE_TO_COMPOSE_DATA_PATH/wikijs/db:/var/lib/postgresql/data
+    networks:
+      - nginx_proxy_manager
+
+  wiki:
+    image: lscr.io/linuxserver/wikijs:latest
+    container_name: wikijs
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      TZ: ${TZ}
+      DB_TYPE: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: wiki
+      DB_PASS: ${WIKI_DB_PASS}
+      DB_NAME: wiki
+    volumes:
+      - CHANGE_TO_COMPOSE_DATA_PATH/wikijs/config:/config
+      - CHANGE_TO_COMPOSE_DATA_PATH/wikijs/data:/data
+    networks:
+      - nginx_proxy_manager
+
+networks:
+  nginx_proxy_manager:
+    external: true

@@ -15,3 +15,4 @@ To run these services, replace the following example values with production valu
 |NEXTCLOUD_TRUSTED_DOMAIN|nextcloud.example.org|
 |MQTT_USER|example|
 |MQTT_PASSWORD|example_password|
+|WIKI_DB_PASS|example_password|
