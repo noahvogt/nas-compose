@@ -16,3 +16,5 @@ To run these services, replace the following example values with production valu
 |MQTT_USER|example|
 |MQTT_PASSWORD|example_password|
 |WIKI_DB_PASS|example_password|
+|WP_DB_ROOT_PW|example_password|
+|WP_DB_USER_PW|example_password|

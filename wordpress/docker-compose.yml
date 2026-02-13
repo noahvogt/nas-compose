@@ -1,0 +1,36 @@
+services:
+  db:
+    image: mariadb:10.11
+    container_name: wordpress_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${WP_DB_ROOT_PW}
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wpuser
+      MYSQL_PASSWORD: ${WP_DB_USER_PW}
+      TZ: ${TZ}
+    volumes:
+      - CHANGE_TO_COMPOSE_DATA_PATH/wordpress/db:/var/lib/mysql
+    networks:
+      - nginx_proxy_manager
+
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress
+    restart: always
+    depends_on:
+      - db
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wpuser
+      WORDPRESS_DB_PASSWORD: ${WP_DB_USER_PW}
+      WORDPRESS_DB_NAME: wordpress
+      TZ: ${TZ}
+    volumes:
+      - CHANGE_TO_COMPOSE_DATA_PATH/wordpress/html:/var/www/html
+    networks:
+      - nginx_proxy_manager
+
+networks:
+  nginx_proxy_manager:
+    external: true
