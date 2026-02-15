@@ -7,6 +7,8 @@ To run these services, replace the following example values with production valu
 |Environment Variable|Value|
 |---|---|
 |TZ|Europe/Berlin|
+|UID|1000|
+|GID|1000|
 |PIHOLE_WEBPASSWORD|example_password|
 |PIHOLE_LOCAL_IP|192.168.1.2|
 |NEXTCLOUD_MARIADB_ROOT_PW|example_password|
@@ -18,3 +20,5 @@ To run these services, replace the following example values with production valu
 |WIKI_DB_PASS|example_password|
 |WP_DB_ROOT_PW|example_password|
 |WP_DB_USER_PW|example_password|
+|FORGEJO_DOMAIN|git.example.org|
+|FORGEJO_ROOT_URL|https://git.example.org/|

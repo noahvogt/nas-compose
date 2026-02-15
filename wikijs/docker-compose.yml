@@ -19,8 +19,8 @@ services:
     depends_on:
       - db
     environment:
-      PUID: ${PUID:-1000}
-      PGID: ${PGID:-1000}
+      PUID: ${UID}
+      PGID: ${GID}
       TZ: ${TZ}
       DB_TYPE: postgres
       DB_HOST: db
