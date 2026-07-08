@@ -1,0 +1,20 @@
+---
+- name: Setup Host for wg-easy
+  hosts: all
+  become: yes
+  tasks:
+    - name: Enable IPv4 IP forwarding
+      ansible.posix.sysctl:
+        name: net.ipv4.ip_forward
+        value: '1'
+        sysctl_set: yes
+        state: present
+        reload: yes
+
+    - name: Enable IPv4 source route verification
+      ansible.posix.sysctl:
+        name: net.ipv4.conf.all.src_valid_mark
+        value: '1'
+        sysctl_set: yes
+        state: present
+        reload: yes
