@@ -3,7 +3,7 @@ services:
     environment:
       - LANG=en
       - WG_HOST=vpn.mennoniten-basel.ch
-      - WG_DEFAULT_DNS=192.168.1.5
+      - WG_DEFAULT_DNS=192.168.71.5
       - PASSWORD_HASH=$$2b$$12$$8GRaw7h6N9G7UfS0UQBIr.GBt5DMAvoMBgHVq9Bn1aA6A2F4cj1qG
       - PORT=51821
       - WG_PORT=51822

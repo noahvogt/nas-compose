@@ -18,6 +18,16 @@ services:
     # use the above line for LDNA+uPnP+mDNS functionality, worsens security
     depends_on:
       - mqtt
+      - matter-server
+
+  matter-server:
+    image: ghcr.io/home-assistant-libs/python-matter-server:stable
+    container_name: matter-server
+    restart: unless-stopped
+    volumes:
+      - CHANGE_TO_COMPOSE_DATA_PATH/matter:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    network_mode: host
 
   mqtt:
     container_name: mosquitto
